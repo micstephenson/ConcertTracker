@@ -1,11 +1,14 @@
 ﻿@page "/"
 @using ConcertTrackerBlazorHybridApp.Data
+@using System.Text.Json
+@inject ConcertService ConcertService
+@inject IHttpClientFactory HttpClientFactory
 
-<h1>Hello, world!</h1>
+<h1>Concert Tracker</h1>
 
 Welcome to your new Concert Tracker App.
 
-<ul class="list-unstyled">
+@* <ul class="list-unstyled">
     @foreach (var concert in concert)
     {
         <li>
@@ -13,34 +16,84 @@ Welcome to your new Concert Tracker App.
             <input @bind="concert.Artist" />
         </li>
     }
-</ul>
+</ul> *@
+<Div>
+    <input placeholder="Artist" @bind="newArtist" />
+    <input placeholder="City" list="city-suggestions" @bind="newLocation" @oninput="OnCityInput" />
+    <datalist id="city-suggestions">
+        @foreach (var city in citySuggestions)
+        {
+            <option value="@city" />
+        }
+    </datalist>
+    <DateInput TValue="DateTime?" @bind-Value="@concertDate" />
+    <Switch TValue="bool" @bind-Value="@attended" Disabled="@IsFuture">Attended</Switch>
+    @if (attended)
+    {
+        <Rating @key="ratingKey" Color="Color.Primary" @bind-SelectedValue="@rating" MaxValue="5" GetTooltip="@GetTooltip" />
+    }
+    <Button Color="Color.Primary" Clicked="AddConcert">Add Concert</Button>
+</Div>
 
-<input placeholder="Artist" @bind="newArtist" />
-<input placeholder="City" @bind="newLocation" />
-<DateInput TValue="DateTime?" @bind-Value="@concertDate" />
-<Switch TValue="bool" @bind-Value="@attended">Attended</Switch>
-<Rating Color="Color.Primary" @bind-SelectedValue="@SelectedValue" MaxValue="5" GetTooltip="@GetTooltip" />
 
 
 @code {
-    public List<Concerts> concert = new();
+    public IReadOnlyList<Concerts> concert => ConcertService.GetAll();
     public string? newLocation;
     public string? newArtist;
     public DateTime? concertDate;
     public bool attended;
-    int SelectedValue = 5;
+    public int rating;
+    private int ratingKey;
+    private List<string> citySuggestions = new();
+
+    private async Task OnCityInput(ChangeEventArgs e)
+    {
+        var value = e.Value?.ToString() ?? string.Empty;
+        newLocation = value;
+
+        if (value.Length < 2)
+        {
+            citySuggestions.Clear();
+            return;
+        }
+
+        try
+        {
+            var http = HttpClientFactory.CreateClient("nominatim");
+            var request = new HttpRequestMessage(HttpMethod.Get,
+                $"/search?q={Uri.EscapeDataString(value)}&featuretype=city&format=json&limit=8&addressdetails=0");
+            request.Headers.Add("User-Agent", "ConcertTrackerApp/1.0");
+            var response = await http.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                using var doc = JsonDocument.Parse(json);
+                citySuggestions = doc.RootElement.EnumerateArray()
+                    .Select(e => e.GetProperty("display_name").GetString() ?? string.Empty)
+                    .Where(s => !string.IsNullOrEmpty(s))
+                    .ToList();
+            }
+        }
+        catch
+        {
+            citySuggestions.Clear();
+        }
+    }
+
+    private bool IsFuture => concertDate.HasValue && concertDate.Value.Date > DateTime.Today;
 
     RatingTooltip GetTooltip(int value)
     {
-        if (value <= 2)
+        if (value == 1)
             return new RatingTooltip("Very bad");
-        else if (value <= 4)
+        else if (value == 2)
             return new RatingTooltip("Bad", TooltipPlacement.Bottom);
-        else if (value <= 6)
+        else if (value == 3)
             return new RatingTooltip("Fair");
-        else if (value <= 8)
+        else if (value == 4)
             return new RatingTooltip("Good", TooltipPlacement.Top, false, false);
-        else if (value <= 10)
+        else if (value == 5)
             return new RatingTooltip("Very good");
 
         return null;
@@ -50,12 +103,13 @@ Welcome to your new Concert Tracker App.
     {
         if (!string.IsNullOrWhiteSpace(newArtist))
         {
+            ConcertService.Add(new Concerts { Artist = newArtist, Location = newLocation, Date = concertDate ?? DateTime.Now, Attended = attended, Rating = rating });
             newArtist = string.Empty;
             newLocation = string.Empty;
             concertDate = null;
             attended = false;
-            concert.Add(new Concerts { Artist = newArtist, Location = newLocation, Date = concertDate ?? DateTime.Now, Attended = attended });
+            rating = 0;
+            ratingKey++;
         }
-
     }
 }

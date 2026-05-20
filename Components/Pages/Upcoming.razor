@@ -1,0 +1,31 @@
+﻿@page "/upcoming"
+@using ConcertTrackerBlazorHybridApp.Data
+@inject ConcertService ConcertService
+
+<h1>Upcoming Concerts</h1>
+
+<p>Here are your next gigs</p>
+
+@if (!ConcertService.GetUpcoming().Any())
+{
+    <p>No upcoming concerts yet. Add concerts on the Home page.</p>
+}
+
+<div class="row row-cols-1 row-cols-md-3 g-3">
+    @foreach (var concert in ConcertService.GetUpcoming())
+    {
+        <div class="col">
+            <Card>
+                <CardBody>
+                    <CardTitle Size="HeadingSize.Is5">@concert.Artist</CardTitle>
+                    <CardText>@concert.Location</CardText>
+                    <CardText>@concert.Date.ToShortDateString()</CardText>
+                </CardBody>
+            </Card>
+        </div>
+    }
+</div>
+
+@code {
+    
+}

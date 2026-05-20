@@ -6,4 +6,5 @@ public class Concerts
     public string Location { get; set; }
     public DateTime Date { get; set; }
     public bool Attended { get; set; } = false;
+    public int Rating { get; set; } = 0;
 }

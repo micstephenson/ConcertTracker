@@ -1,6 +1,7 @@
 ﻿using Blazorise;
 using Blazorise.Bootstrap5;
 using Blazorise.Icons.FontAwesome;
+using ConcertTrackerBlazorHybridApp.Data;
 using Microsoft.Extensions.Logging;
 
 namespace ConcertTrackerBlazorHybridApp
@@ -18,6 +19,10 @@ namespace ConcertTrackerBlazorHybridApp
                 });
 
             builder.Services.AddMauiBlazorWebView();
+            builder.Services.AddSingleton<ConcertService>();
+            builder.Services.AddHttpClient("nominatim", c => c.BaseAddress = new Uri("https://nominatim.openstreetmap.org"));
+            builder.Services.AddHttpClient("itunes", c => c.BaseAddress = new Uri("https://itunes.apple.com"));
+            builder.Services.AddSingleton<LastFmService>();
 
             builder.Services
                 .AddBlazorise(options => { options.Immediate = true; })

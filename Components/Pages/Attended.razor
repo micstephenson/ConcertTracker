@@ -1,41 +1,49 @@
 ﻿@page "/attended"
 @using ConcertTrackerBlazorHybridApp.Data
+@inject ConcertService ConcertService
+@inject LastFmService LastFmService
 
 <h1>Attended</h1>
 
-<CardDeck>
-    <Card>
-        <CardImage Source="" Alt=""></CardImage>
-        <CardBody>
-            <CardTitle Size="HeadingSize.Is5">Card title 1</CardTitle>
-            <CardText>
-                This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.
-            </CardText>
-            <Button Color="Color.Primary">Button</Button>
-        </CardBody>
-    </Card>
-    <Card>
-        <CardImage Source="" Alt=""></CardImage>
-        <CardBody>
-            <CardTitle Size="HeadingSize.Is5">Card title 2</CardTitle>
-            <CardText>
-                This card has supporting text below as a natural lead-in to additional content.
-            </CardText>
-            <Button Color="Color.Primary">Button</Button>
-        </CardBody>
-    </Card>
-    <Card>
-        <CardImage Source="" Alt=""></CardImage>
-        <CardBody>
-            <CardTitle Size="HeadingSize.Is5">Card title 3</CardTitle>
-            <CardText>
-                This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.
-            </CardText>
-            <Button Color="Color.Primary">Button</Button>
-        </CardBody>
-    </Card>
-</CardDeck>
+@if (!ConcertService.GetAttended().Any())
+{
+    <p>No attended concerts yet. Mark concerts as attended on the Home page.</p>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-3 g-3">
+        @foreach (var concert in ConcertService.GetAttended())
+        {
+            <div class="col">
+                <Card>
+                    @if (artistImages.TryGetValue(concert.Artist, out var imgUrl) && !string.IsNullOrEmpty(imgUrl))
+                    {
+                        <CardImage Source="@imgUrl" Alt="@concert.Artist" />
+                    }
+                    <CardBody>
+                        <CardTitle Size="HeadingSize.Is5">@concert.Artist</CardTitle>
+                        <CardText>@concert.Location</CardText>
+                        <CardText>@concert.Date.ToShortDateString()</CardText>
+                        <Rating Color="Color.Primary" SelectedValue="@concert.Rating" MaxValue="5" ReadOnly/>
+                    </CardBody>
+                </Card>
+            </div>
+        }
+    </div>
+}
 
 @code {
-    
+    private Dictionary<string, string?> artistImages = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        foreach (var concert in ConcertService.GetAttended())
+        {
+            if (!artistImages.ContainsKey(concert.Artist))
+            {
+                artistImages[concert.Artist] = await LastFmService.GetArtistImageUrlAsync(concert.Artist);
+            }
+        }
+    }
+}
 }
