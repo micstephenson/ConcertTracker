@@ -20,12 +20,40 @@
                     <CardTitle Size="HeadingSize.Is5">@concert.Artist</CardTitle>
                     <CardText>@concert.Location</CardText>
                     <CardText>@concert.Date.ToShortDateString()</CardText>
+                    <Switch TValue="bool"
+                            @bind-Value="@concert.Attended"
+                            Disabled="@IsFuture(concert.Date)"
+                            GetTooltip="@GetTooltip">Attended
+                    </Switch>
+                    @if (concert.Attended)
+                    {
+                        <Component />
+                    }
                 </CardBody>
             </Card>
         </div>
+
+        RatingTooltip GetTooltip(int value)
+        {
+            if (value == 1)
+                return new RatingTooltip("Very bad");
+            else if (value == 2)
+                return new RatingTooltip("Bad", TooltipPlacement.Bottom);
+            else if (value == 3)
+                return new RatingTooltip("Fair");
+            else if (value == 4)
+                return new RatingTooltip("Good", TooltipPlacement.Top, false, false);
+            else if (value == 5)
+                return new RatingTooltip("Very good");
+
+            return null;
+        }
     }
 </div>
 
 @code {
-    
+    private static bool IsFuture(DateTime concertDate)
+    {
+        return concertDate.Date > DateTime.Today;
+    }
 }

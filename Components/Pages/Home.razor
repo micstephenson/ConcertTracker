@@ -35,7 +35,12 @@ Welcome to your new Concert Tracker App.
     <Button Color="Color.Primary" Clicked="AddConcert">Add Concert</Button>
 </Div>
 
-
+<Alert Color="Color.Success" @bind-Visible="@visible">
+    <AlertDescription>
+        Successfully Added A concert
+    </AlertDescription>
+    <CloseButton />
+</Alert>
 
 @code {
     public IReadOnlyList<Concerts> concert => ConcertService.GetAll();
@@ -46,6 +51,7 @@ Welcome to your new Concert Tracker App.
     public int rating;
     private int ratingKey;
     private List<string> citySuggestions = new();
+    private bool visible = false;
 
     private async Task OnCityInput(ChangeEventArgs e)
     {
@@ -110,6 +116,7 @@ Welcome to your new Concert Tracker App.
             attended = false;
             rating = 0;
             ratingKey++;
+            visible = true;
         }
     }
 }
