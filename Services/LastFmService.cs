@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace ConcertTrackerBlazorHybridApp.Data;
+namespace ConcertTrackerBlazorHybridApp.Services;
 
 public class LastFmService
 {

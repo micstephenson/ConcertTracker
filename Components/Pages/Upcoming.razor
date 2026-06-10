@@ -1,5 +1,5 @@
 ﻿@page "/upcoming"
-@using ConcertTrackerBlazorHybridApp.Data
+@using ConcertTrackerBlazorHybridApp.Services
 @inject ConcertService ConcertService
 
 <h1>Upcoming Concerts</h1>
@@ -18,11 +18,11 @@
             <Card>
                 <CardBody>
                     <CardTitle Size="HeadingSize.Is5">@concert.Artist</CardTitle>
-                    <CardText>@concert.Location</CardText>
-                    <CardText>@concert.Date.ToShortDateString()</CardText>
+                    <CardText>@concert.City</CardText>
+                    <CardText>@concert.Date?.ToShortDateString()</CardText>
                     <Switch TValue="bool"
                             @bind-Value="@concert.Attended"
-                            Disabled="@IsFuture(concert.Date)"
+                            Disabled="@IsFuture(concert.Date ?? DateTime.MinValue)"
                             GetTooltip="@GetTooltip">Attended
                     </Switch>
                     @if (concert.Attended)

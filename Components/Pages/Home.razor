@@ -1,8 +1,9 @@
 ﻿@page "/"
-@using ConcertTrackerBlazorHybridApp.Data
+@using ConcertTrackerBlazorHybridApp.Services
+@using ConcertTrackerBlazorHybridApp.DataTransferObjects
 @using System.Text.Json
-@inject ConcertService ConcertService
 @inject IHttpClientFactory HttpClientFactory
+@inject IConcertService ConcertService
 
 <h1>Concert Tracker</h1>
 
@@ -19,7 +20,8 @@ Welcome to your new Concert Tracker App.
 </ul> *@
 <Div>
     <input placeholder="Artist" @bind="newArtist" />
-    <input placeholder="City" list="city-suggestions" @bind="newLocation" @oninput="OnCityInput" />
+    <input placeholder="Venue" @bind="newVenue" />
+    <input placeholder="City" list="city-suggestions" @bind="newCity" @oninput="OnCityInput" />
     <datalist id="city-suggestions">
         @foreach (var city in citySuggestions)
         {
@@ -37,15 +39,16 @@ Welcome to your new Concert Tracker App.
 
 <Alert Color="Color.Success" @bind-Visible="@visible">
     <AlertDescription>
-        Successfully Added A concert
+        Successfully Added A Concert
     </AlertDescription>
     <CloseButton />
 </Alert>
 
 @code {
-    public IReadOnlyList<Concerts> concert => ConcertService.GetAll();
-    public string? newLocation;
+    public IReadOnlyList<ConcertDto> concert => ConcertService.GetAll();
+    public string? newCity;
     public string? newArtist;
+    public string? newVenue;
     public DateTime? concertDate;
     public bool attended;
     public int rating;
@@ -56,7 +59,7 @@ Welcome to your new Concert Tracker App.
     private async Task OnCityInput(ChangeEventArgs e)
     {
         var value = e.Value?.ToString() ?? string.Empty;
-        newLocation = value;
+        newCity = value;
 
         if (value.Length < 2)
         {
@@ -101,7 +104,7 @@ Welcome to your new Concert Tracker App.
             return new RatingTooltip("Good", TooltipPlacement.Top, false, false);
         else if (value == 5)
             return new RatingTooltip("Very good");
-
+        
         return null;
     }
 
@@ -109,9 +112,10 @@ Welcome to your new Concert Tracker App.
     {
         if (!string.IsNullOrWhiteSpace(newArtist))
         {
-            ConcertService.Add(new Concerts { Artist = newArtist, Location = newLocation, Date = concertDate ?? DateTime.Now, Attended = attended, Rating = rating });
+            ConcertService.Add(new ConcertDto { Artist = newArtist, Venue = newVenue, City = newCity, Date = concertDate ?? DateTime.Now, Attended = attended, Rating = ((rating == 0) ? null : rating) });
             newArtist = string.Empty;
-            newLocation = string.Empty;
+            newVenue = string.Empty;
+            newCity = string.Empty;
             concertDate = null;
             attended = false;
             rating = 0;
