@@ -22,6 +22,7 @@ else
                     }
                     <CardBody>
                         <CardTitle Size="HeadingSize.Is5">@concert.Artist</CardTitle>
+                        <CardText>@concert.Venue</CardText>
                         <CardText>@concert.City</CardText>
                         <CardText>@concert.Date?.ToShortDateString()</CardText>
                         <Rating Color="Color.Primary" SelectedValue="@(concert.Rating ?? 0)" MaxValue="5" ReadOnly/>

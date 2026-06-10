@@ -44,6 +44,29 @@ Welcome to your new Concert Tracker App.
     <CloseButton />
 </Alert>
 
+<div>
+    <h2>Ready to Rate?</h2>
+    @foreach (var concert in ConcertService.ToBeRated())
+    {
+        <div class="col">
+            <Card>
+                <CardBody>
+                    <CardTitle Size="HeadingSize.Is5">@concert.Artist</CardTitle>
+                    <CardText>@concert.Venue</CardText>
+                    <CardText>@concert.City</CardText>
+                    <CardText>@concert.Date?.ToShortDateString()</CardText>                    
+                    <Rating @key="ratingKey" Color="Color.Primary" @bind-SelectedValue="@rating" MaxValue="5" GetTooltip="@GetTooltip" />             
+                </CardBody>
+                <Button Color="Color.Primary" Clicked="() => AddRating(concert, rating)">Update Concert</Button>
+            </Card>
+            @if (string.IsNullOrEmpty(rating.ToString()))
+            {
+                <p>Please rate the concert</p>
+            }
+        </div>
+    }
+</div>
+
 @code {
     public IReadOnlyList<ConcertDto> concert => ConcertService.GetAll();
     public string? newCity;
@@ -112,7 +135,9 @@ Welcome to your new Concert Tracker App.
     {
         if (!string.IsNullOrWhiteSpace(newArtist))
         {
-            ConcertService.Add(new ConcertDto { Artist = newArtist, Venue = newVenue, City = newCity, Date = concertDate ?? DateTime.Now, Attended = attended, Rating = ((rating == 0) ? null : rating) });
+            int? validRating = (attended && rating >= 1 && rating <= 5) ? rating : null;
+
+            ConcertService.Add(new ConcertDto { Artist = newArtist, Venue = newVenue, City = newCity, Date = concertDate ?? DateTime.Now, Attended = attended, Rating = validRating });
             newArtist = string.Empty;
             newVenue = string.Empty;
             newCity = string.Empty;
@@ -121,6 +146,20 @@ Welcome to your new Concert Tracker App.
             rating = 0;
             ratingKey++;
             visible = true;
+        }
+    }
+
+    private void AddRating(ConcertDto concert, int rating)
+    {
+        if (rating >= 1 && rating <= 5)
+        {
+            concert.Rating = rating;
+            ConcertService.AddRating(concert, rating);
+            ratingKey++;
+        }
+        else 
+        {
+            
         }
     }
 }

@@ -14,7 +14,7 @@ public static class ConcertMapper
             City = entity?.city,
             Date = entity?.concert_date,
             Attended = entity?.attended ?? false,
-            Rating = entity?.rating ?? 0
+            Rating = entity?.rating
         };
     }
 
@@ -30,7 +30,7 @@ public static class ConcertMapper
             city = dto?.City,
             concert_date = dto?.Date,
             attended = dto?.Attended ?? false,
-            rating = dto?.Rating ?? 0
+            rating = dto?.Rating
         };
     }
         
