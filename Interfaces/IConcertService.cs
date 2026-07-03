@@ -1,7 +1,7 @@
 ﻿using ConcertTrackerBlazorHybridApp.Data.Entities;
 using ConcertTrackerBlazorHybridApp.DataTransferObjects;
 
-namespace ConcertTrackerBlazorHybridApp.Services;
+namespace ConcertTrackerBlazorHybridApp.Interfaces;
 
 public interface IConcertService
 {

@@ -25,7 +25,7 @@ public class ConcertRepository(ConcertDbContext context) : IConcertRepository
 
     public IReadOnlyList<Concerts> GetUpcoming()
     {
-        var concerts = context.Concert.Where(c => !c.attended).ToList();
+        var concerts = context.Concert.Where(c => c.concert_date > DateTime.Now).ToList();
         return concerts;
     }
 

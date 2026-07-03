@@ -2,6 +2,7 @@
 using Blazorise.Bootstrap5;
 using Blazorise.Icons.FontAwesome;
 using ConcertTrackerBlazorHybridApp.Data;
+using ConcertTrackerBlazorHybridApp.Interfaces;
 using ConcertTrackerBlazorHybridApp.Repositories;
 using ConcertTrackerBlazorHybridApp.Services;
 using Microsoft.EntityFrameworkCore;
@@ -51,6 +52,7 @@ namespace ConcertTrackerBlazorHybridApp
 
             builder.Services.AddScoped<IConcertRepository, ConcertRepository>();
             builder.Services.AddScoped<IConcertService>(sp => sp.GetRequiredService<ConcertService>());
+            builder.Services.AddSingleton<IExternalLinkService, ExternalLinkService>();
 
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();

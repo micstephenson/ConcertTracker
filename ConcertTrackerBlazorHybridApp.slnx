@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="../ConcertTrackerBlazorHybridAppTests/ConcertTrackerBlazorHybridAppTests.csproj" Id="dc1c3d26-ca68-4248-bf0c-65651389e97d" />
   <Project Path="ConcertTrackerBlazorHybridApp.csproj" />
 </Solution>

@@ -9,6 +9,7 @@ public static class ConcertMapper
     {
         return new ConcertDto
         {
+            ConcertId = entity?.concertId ?? 0,
             Artist = entity?.artist,
             Venue = entity?.venue,
             City = entity?.city,
@@ -25,6 +26,7 @@ public static class ConcertMapper
     {
         return new Concerts
         {
+            concertId = dto?.ConcertId ?? 0,
             artist = dto?.Artist,
             venue = dto?.Venue,
             city = dto?.City,

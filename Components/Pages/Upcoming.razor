@@ -22,13 +22,12 @@
                     <CardText>@concert.City</CardText>
                     <CardText>@concert.Date?.ToShortDateString()</CardText>
                     <Switch TValue="bool"
-                            @bind-Value="@concert.Attended"
                             Disabled="@IsFuture(concert.Date ?? DateTime.MinValue)"
                             GetTooltip="@GetTooltip">Attended
                     </Switch>
                     @if (concert.Attended)
                     {
-                        <Component />
+                        
                     }
                 </CardBody>
             </Card>

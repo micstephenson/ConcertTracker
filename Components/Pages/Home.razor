@@ -1,26 +1,25 @@
 ﻿@page "/"
-@using ConcertTrackerBlazorHybridApp.Services
+@using ConcertTrackerBlazorHybridApp.Interfaces
 @using ConcertTrackerBlazorHybridApp.DataTransferObjects
 @using System.Text.Json
 @inject IHttpClientFactory HttpClientFactory
 @inject IConcertService ConcertService
+@inject IExternalLinkService ExternalLinkService
 
 <h1>Concert Tracker</h1>
 
 Welcome to your new Concert Tracker App.
 
-@* <ul class="list-unstyled">
-    @foreach (var concert in concert)
-    {
-        <li>
-            <input type="checkbox" @bind="concert.Attended" />
-            <input @bind="concert.Artist" />
-        </li>
-    }
-</ul> *@
+<Button Color="Color.Primary" Clicked='() => ExternalLinkService.OpenExternalAsync("https://www.ticketmaster.com")'>
+    Open Ticketmaster
+</Button>
+
+<Button Color="Color.Secondary" Clicked='() => ExternalLinkService.OpenInAppAsync("https://www.ticketmaster.com")'>
+    Try In-App View
+</Button>
 <Div>
-    <input placeholder="Artist" @bind="newArtist" />
-    <input placeholder="Venue" @bind="newVenue" />
+    <input placeholder="Artist" @bind="newArtist" @bind:event="oninput" />
+    <input placeholder="Venue" @bind="newVenue" @bind:event="oninput" />
     <input placeholder="City" list="city-suggestions" @bind="newCity" @oninput="OnCityInput" />
     <datalist id="city-suggestions">
         @foreach (var city in citySuggestions)

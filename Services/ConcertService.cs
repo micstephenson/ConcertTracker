@@ -1,5 +1,5 @@
 using ConcertTrackerBlazorHybridApp.DataTransferObjects;
-using ConcertTrackerBlazorHybridApp.Data.Entities;
+using ConcertTrackerBlazorHybridApp.Interfaces;
 using ConcertTrackerBlazorHybridApp.Mappers;
 using ConcertTrackerBlazorHybridApp.Repositories;
 
